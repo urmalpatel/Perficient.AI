@@ -1,450 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agentic RAG: AI-Powered Advisor Research Assistant</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perficent Agentic RAG - Executive Sales Pitch</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111b2f;
+      --panel-soft: #16243f;
+      --text: #e6edf8;
+      --muted: #b6c3da;
+      --brand: #60a5fa;
+      --accent: #22c55e;
+      --warn: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Inter, Arial, sans-serif;
+      background: radial-gradient(circle at top right, #1e3a8a 0%, var(--bg) 45%);
+      color: var(--text);
+    }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 2rem 1.25rem 2.5rem; }
+    .hero {
+      background: linear-gradient(140deg, rgba(37,99,235,0.32), rgba(15,23,42,0.92));
+      border: 1px solid rgba(148,163,184,0.3);
+      border-radius: 18px;
+      padding: 1.4rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .kicker {
+      display: inline-block;
+      padding: .25rem .55rem;
+      border-radius: 999px;
+      background: rgba(96,165,250,0.2);
+      color: #bfdbfe;
+      font-weight: 700;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    h1 { margin: .6rem 0 .2rem; font-size: 2rem; }
+    .sub { color: var(--muted); margin: 0; }
 
-        body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #0f172a;
-            overflow: hidden;
-        }
+    .grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 1rem; }
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(148,163,184,0.22);
+      border-radius: 14px;
+      padding: 1rem 1rem 1.1rem;
+    }
+    h2 { margin: 0 0 .55rem; font-size: 1.08rem; color: #dbeafe; }
+    p, li { color: var(--muted); line-height: 1.5; }
+    ul { margin: .35rem 0 0 1rem; padding: 0; }
 
-        .slide {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #16213e 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Animated gradient background elements */
-        .bg-glow {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.15;
-        }
-
-        .glow-1 {
-            width: 600px;
-            height: 600px;
-            background: #3b82f6;
-            top: -200px;
-            right: -150px;
-            animation: float 8s ease-in-out infinite;
-        }
-
-        .glow-2 {
-            width: 400px;
-            height: 400px;
-            background: #7c3aed;
-            bottom: -100px;
-            left: -100px;
-            animation: float 10s ease-in-out infinite reverse;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) translateX(0px); }
-            50% { transform: translateY(20px) translateX(10px); }
-        }
-
-        .content {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            padding: 4rem;
-        }
-
-        .header {
-            flex: 0 0 auto;
-        }
-
-        .header-eyebrow {
-            display: inline-block;
-            background: rgba(59, 130, 246, 0.2);
-            border: 1px solid rgba(59, 130, 246, 0.5);
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            color: #60a5fa;
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-        }
-
-        h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1rem;
-            background: linear-gradient(120deg, #e2e8f0 0%, #93c5fd 50%, #60a5fa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .tagline {
-            font-size: 1.25rem;
-            color: #cbd5e1;
-            max-width: 700px;
-            line-height: 1.6;
-            margin-bottom: 3rem;
-        }
-
-        .main-grid {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        .value-props {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .value-prop {
-            display: flex;
-            gap: 1rem;
-            padding: 1.25rem;
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 0.75rem;
-            transition: all 0.3s ease;
-        }
-
-        .value-prop:hover {
-            background: rgba(30, 41, 59, 0.9);
-            border-color: rgba(96, 165, 250, 0.5);
-            transform: translateX(8px);
-        }
-
-        .value-prop-icon {
-            flex: 0 0 auto;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            border-radius: 0.5rem;
-            font-size: 1.5rem;
-        }
-
-        .value-prop-content h3 {
-            font-size: 1.1rem;
-            color: #e2e8f0;
-            margin-bottom: 0.35rem;
-            font-weight: 700;
-        }
-
-        .value-prop-content p {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            line-height: 1.5;
-        }
-
-        .capabilities {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .capability-section h3 {
-            font-size: 0.95rem;
-            color: #93c5fd;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-        }
-
-        .data-sources {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-        }
-
-        .data-badge {
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid rgba(96, 165, 250, 0.3);
-            border-radius: 0.5rem;
-            padding: 0.7rem 1rem;
-            font-size: 0.85rem;
-            color: #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
-        }
-
-        .data-badge:hover {
-            background: rgba(15, 23, 42, 1);
-            border-color: rgba(96, 165, 250, 0.6);
-            color: #60a5fa;
-        }
-
-        .data-badge::before {
-            content: '●';
-            color: #60a5fa;
-            font-size: 1.2rem;
-            line-height: 1;
-        }
-
-        .cta-section {
-            flex: 0 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(148, 163, 184, 0.15);
-            margin-top: 2rem;
-        }
-
-        .cta-text {
-            flex: 1;
-        }
-
-        .cta-text p {
-            font-size: 0.95rem;
-            color: #cbd5e1;
-            margin-bottom: 0.5rem;
-        }
-
-        .metrics {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .metric {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .metric-value {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(120deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .metric-label {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-        .social-proof {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(37, 99, 235, 0.15);
-            border: 1px solid rgba(37, 99, 235, 0.3);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            color: #60a5fa;
-        }
-
-        .badge::before {
-            content: '✓';
-            font-weight: 800;
-        }
-
-        @media (max-width: 1200px) {
-            h1 {
-                font-size: 2.8rem;
-            }
-
-            .main-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .content {
-                padding: 2.5rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            .tagline {
-                font-size: 1rem;
-            }
-
-            .content {
-                padding: 1.5rem;
-            }
-
-            .main-grid {
-                gap: 1.5rem;
-            }
-
-            .cta-section {
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-        }
-
-        /* Presentation mode: press F for fullscreen */
-        .slide.fullscreen {
-            width: 100vw;
-            height: 100vh;
-        }
-    </style>
+    .metric {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .6rem;
+      margin-top: .65rem;
+    }
+    .metric .box {
+      background: var(--panel-soft);
+      border: 1px solid rgba(148,163,184,0.2);
+      border-radius: 10px;
+      padding: .65rem;
+      text-align: center;
+    }
+    .metric strong { display: block; font-size: 1.35rem; color: #f8fafc; }
+    .pill {
+      display: inline-block;
+      margin: .2rem .2rem 0 0;
+      padding: .24rem .52rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.35);
+      font-size: .78rem;
+      color: #dbeafe;
+      background: rgba(30,41,59,0.65);
+    }
+    .cta {
+      margin-top: .85rem;
+      background: linear-gradient(90deg, rgba(34,197,94,0.18), rgba(96,165,250,0.18));
+      border: 1px solid rgba(34,197,94,0.4);
+      color: #dcfce7;
+      border-radius: 12px;
+      padding: .8rem .9rem;
+      font-weight: 600;
+    }
+    .footer {
+      margin-top: 1rem;
+      text-align: right;
+      color: #93a7c9;
+      font-size: .82rem;
+    }
+    @media (max-width: 940px) {
+      .grid { grid-template-columns: 1fr; }
+      .metric { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-    <div class="slide">
-        <div class="bg-glow glow-1"></div>
-        <div class="bg-glow glow-2"></div>
+  <main class="wrap">
+    <section class="hero">
+      <span class="kicker">Executive Sales Pitch</span>
+      <h1>Perficent Agentic RAG</h1>
+      <p class="sub">Turn broker research into a consistent, explainable, and production-governed advantage.</p>
+    </section>
 
-        <div class="content">
-            <div class="header">
-                <div class="header-eyebrow">Next-Generation Advisor Technology</div>
-                <h1>Meet Your AI&nbsp;Research Assistant</h1>
-                <p class="tagline">Real-time equity intelligence, grounded in official filings and market data. Advisors spend less time researching, more time advising.</p>
-            </div>
+    <section class="grid">
+      <article class="card">
+        <h2>The Customer Problem</h2>
+        <ul>
+          <li>Advisors lose time stitching data from quotes, filings, and news.</li>
+          <li>Responses vary by analyst and lack governance.</li>
+          <li>Compliance and quality teams have limited traceability.</li>
+        </ul>
 
-            <div class="main-grid">
-                <div class="value-props">
-                    <div class="value-prop">
-                        <div class="value-prop-icon">⚡</div>
-                        <div class="value-prop-content">
-                            <h3>Instant Research</h3>
-                            <p>Streaming results—no waiting. Filings, quotes, and insights flow in real-time.</p>
-                        </div>
-                    </div>
+        <h2 style="margin-top:.9rem;">Why This Solution Wins</h2>
+        <ul>
+          <li><strong>Faster Advisor Output:</strong> one workspace for prompt, evidence, and professional response generation.</li>
+          <li><strong>Trust by Design:</strong> source-aware workflow, SEC-aware tooling, and durable fact continuity.</li>
+          <li><strong>Operational Control:</strong> end-to-end observability and release-gate indicators for administrators.</li>
+          <li><strong>Enterprise Ready:</strong> .NET 10, Blazor UI, minimal API backend, evaluation and feedback loops built in.</li>
+        </ul>
 
-                    <div class="value-prop">
-                        <div class="value-prop-icon">🛡️</div>
-                        <div class="value-prop-content">
-                            <h3>Grounded in Fact</h3>
-                            <p>Every insight traces back to SEC filings, company facts, and verified market data.</p>
-                        </div>
-                    </div>
-
-                    <div class="value-prop">
-                        <div class="value-prop-icon">🎯</div>
-                        <div class="value-prop-content">
-                            <h3>Advisor-First Design</h3>
-                            <p>Built for wealth managers. Ask one question, get confidence you can defend.</p>
-                        </div>
-                    </div>
-
-                    <div class="value-prop">
-                        <div class="value-prop-icon">🔄</div>
-                        <div class="value-prop-content">
-                            <h3>Extensible Platform</h3>
-                            <p>Foundation for advanced workflows—from screening to automated analysis on autopilot.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="capabilities">
-                    <div class="capability-section">
-                        <h3>📊 Intelligence Sources</h3>
-                        <div class="data-sources">
-                            <div class="data-badge">Live Stock Quotes</div>
-                            <div class="data-badge">Market Status</div>
-                            <div class="data-badge">SEC 10-K/Q</div>
-                            <div class="data-badge">Company Facts</div>
-                            <div class="data-badge">Recent Filings</div>
-                            <div class="data-badge">News Stream</div>
-                        </div>
-                    </div>
-
-                    <div class="capability-section">
-                        <h3>💼 What Advisors See</h3>
-                        <div class="data-sources">
-                            <div class="data-badge">Current Valuation</div>
-                            <div class="data-badge">Recent Catalysts</div>
-                            <div class="data-badge">Key Risks</div>
-                            <div class="data-badge">Sector Trends</div>
-                            <div class="data-badge">Insider Moves</div>
-                            <div class="data-badge">Growth Metrics</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="cta-section">
-                <div class="cta-text">
-                    <p style="font-weight: 600;">Why us?</p>
-                    <p>Built on production-grade .NET 10 with enterprise security, caching, and rate limiting. Seamless REST API and interactive web interface. Ready to deploy today.</p>
-                    <div class="social-proof">
-                        <div class="badge">SEC Verified</div>
-                        <div class="badge">Real-Time Data</div>
-                        <div class="badge">Compliance-Ready</div>
-                    </div>
-                </div>
-
-                <div class="metrics">
-                    <div class="metric">
-                        <div class="metric-value">&lt;2s</div>
-                        <div class="metric-label">Sub-2 Second Response Time</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-value">6+</div>
-                        <div class="metric-label">Data Sources Integrated</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-value">∞</div>
-                        <div class="metric-label">Scalable Workflows</div>
-                    </div>
-                </div>
-            </div>
+        <div class="cta">
+          Recommendation: Position this as a revenue-enabling advisor copilot plus a risk-reducing governance platform in one purchase.
         </div>
-    </div>
+      </article>
 
-    <script>
-        // Simple presentation controls
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'f' || e.key === 'F') {
-                const slide = document.querySelector('.slide');
-                if (!document.fullscreenElement) {
-                    slide.requestFullscreen().catch(err => console.log('Fullscreen request denied'));
-                } else {
-                    document.exitFullscreen();
-                }
-            }
+      <aside class="card">
+        <h2>Value Story in 30 Seconds</h2>
+        <p>
+          Perficent Agentic RAG helps broker teams deliver higher-quality client insights faster while reducing operational risk.
+          It converts scattered research processes into one governed workflow with measurable output quality.
+        </p>
 
-            // Spacebar to progress (placeholder for multi-slide deck)
-            if (e.code === 'Space') {
-                console.log('Next slide (placeholder)');
-            }
-        });
+        <div class="metric">
+          <div class="box">
+            <strong>↓ Time</strong>
+            <span>to produce advisor-ready briefs</span>
+          </div>
+          <div class="box">
+            <strong>↑ Quality</strong>
+            <span>with evaluation gates and matrix signals</span>
+          </div>
+          <div class="box">
+            <strong>↑ Trust</strong>
+            <span>via full traceability and metadata</span>
+          </div>
+        </div>
 
-        // Log presentation mode hint
-        console.log('%c🎯 Advisor Pitch Slide', 'font-size:16px; font-weight:bold; color:#60a5fa;');
-        console.log('%cPress F to enter fullscreen | Press Space to advance', 'font-size:12px; color:#94a3b8;');
-    </script>
+        <h2 style="margin-top:.95rem;">Buyer Confidence Signals</h2>
+        <span class="pill">Structured Evaluation Modes</span>
+        <span class="pill">Observability Timeline</span>
+        <span class="pill">Professional HTML Responses</span>
+        <span class="pill">Session Memory + Durable Facts</span>
+        <span class="pill">Production + Developer Controls</span>
+
+        <h2 style="margin-top:.95rem;">Closing Line</h2>
+        <p style="margin-bottom:0; color:#e2e8f0;">
+          This is not another chatbot. It is a broker-focused decision-support system with governance, accountability, and scale.
+        </p>
+      </aside>
+    </section>
+
+    <div class="footer">Perficent Agentic RAG • Sales Presentation</div>
+  </main>
 </body>
 </html>
